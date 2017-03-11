@@ -212,7 +212,7 @@ function status(interface, callback) {
  *   // the interface is down
  * });
  *
- * ifconfig.down({iface: 'wlan0', sudo: true}, function(err) {
+ * ifconfig.down({interface: 'wlan0', sudo: true}, function(err) {
  *   // the interface is down
  * });
  */
@@ -222,7 +222,7 @@ function down(options, callback) {
    var interface = options;
    var sudo = false;
  } else {
-   var interface = options.iface;
+   var interface = options.interface;
    var sudo = options.sudo || false;
  }
 
@@ -254,14 +254,8 @@ function down(options, callback) {
  *
  */
 function up(options, callback) {
-  var interface, sudo
-  if(typeof options === 'string') {
-    var interface = options;
-    var sudo = false;
-  } else {
-    var interface = options.iface;
-    var sudo = options.sudo || false;
-  }
+  var sudo = options.sudo || false;
+  
   return this.exec((sudo ? 'sudo ' : '') + 'ifconfig ' + options.interface +
     ' ' + options.ipv4_address +
     ' netmask ' + options.ipv4_subnet_mask +

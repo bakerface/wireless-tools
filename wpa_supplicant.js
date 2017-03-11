@@ -56,7 +56,7 @@ var wpa_supplicant = module.exports = {
  * });
  *
  * var options = {
- *   iface: 'wlan0',
+ *   interface: 'wlan0',
  *   sudo: true
  * };
  * wpa_supplicant.disable(options, function(err) {
@@ -69,7 +69,7 @@ function disable(options, callback) {
     var interface = options;
     var sudo = false;
   } else {
-    var interface = options.iface;
+    var interface = options.interface;
     var sudo = options.sudo || false;
   }
   

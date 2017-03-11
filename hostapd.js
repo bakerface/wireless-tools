@@ -53,7 +53,7 @@ var hostapd = module.exports = {
  *   // no longer hosting the access point
  * });
  *
- * hostapd.disable({iface: 'wlan0', sudo: true}, function(err) {
+ * hostapd.disable({interface: 'wlan0', sudo: true}, function(err) {
  *   // no longer hosting the access point
  * });
  */
@@ -63,7 +63,7 @@ function disable(options, callback) {
     var interface = options;
     var sudo = false;
   } else {
-    var interface = options.iface;
+    var interface = options.interface;
     var sudo = options.sudo || false;
   }
 
