@@ -40,6 +40,43 @@ describe('wpa_supplicant', function() {
       });
     })
 
+    it('should stop the daemons using sudo', function(done) {
+      wpa_supplicant.exec = function(command, callback) {
+        should(command).eql(
+          'sudo kill `pgrep -f "wpa_supplicant -i wlan0 .*"` || true');
+
+        callback(null, '', '');
+      };
+
+      var options = {
+        interface: 'wlan0',
+        sudo: true
+      };
+
+      wpa_supplicant.disable(options, function(err) {
+        should(err).not.be.ok;
+        done();
+      });
+    })
+
+    it('should stop the daemons using options without sudo', function(done) {
+      wpa_supplicant.exec = function(command, callback) {
+        should(command).eql(
+          'kill `pgrep -f "wpa_supplicant -i wlan0 .*"` || true');
+
+        callback(null, '', '');
+      };
+
+      var options = {
+        interface: 'wlan0'
+      };
+
+      wpa_supplicant.disable(options, function(err) {
+        should(err).not.be.ok;
+        done();
+      });
+    })
+
     it('should handle errors', function(done) {
       wpa_supplicant.exec = function(command, callback) {
         callback('error');
@@ -68,6 +105,30 @@ describe('wpa_supplicant', function() {
         ssid: 'RaspberryPi',
         passphrase: 'raspberry',
         driver: 'wext'
+      };
+
+      wpa_supplicant.enable(options, function(err) {
+        should(err).not.be.ok;
+        done();
+      });
+    })
+
+    it('should start the daemon using sudo', function(done) {
+      wpa_supplicant.exec = function(command, callback) {
+        should(command).eql('wpa_passphrase "RaspberryPi" "raspberry"' +
+          ' > wlan0-wpa_supplicant.conf &&' +
+          ' sudo wpa_supplicant -i wlan0 -B -D wext -c wlan0-wpa_supplicant.conf' +
+          ' && rm -f wlan0-wpa_supplicant.conf');
+
+        callback(null, '', '');
+      };
+
+      var options = {
+        interface: 'wlan0',
+        ssid: 'RaspberryPi',
+        passphrase: 'raspberry',
+        driver: 'wext',
+        sudo: true
       };
 
       wpa_supplicant.enable(options, function(err) {
@@ -109,6 +170,28 @@ describe('wpa_supplicant', function() {
       var options = {
         interface: 'wlan0',
         drivers: [ 'nl80211', 'wext' ]
+      };
+
+      wpa_supplicant.manual(options, function(err) {
+        should(err).not.be.ok;
+        done();
+      });
+    })
+
+    it('should start the daemon using sudo', function(done) {
+      wpa_supplicant.exec = function(command, callback) {
+        should(command).eql([
+          'sudo wpa_supplicant -i wlan0 -s -B -P /run/wpa_supplicant/wlan0.pid',
+          '-D nl80211,wext -C /run/wpa_supplicant'
+          ].join(' '));
+
+        callback(null, '', '');
+      };
+
+      var options = {
+        interface: 'wlan0',
+        drivers: [ 'nl80211', 'wext' ],
+        sudo: true
       };
 
       wpa_supplicant.manual(options, function(err) {
